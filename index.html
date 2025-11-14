@@ -1,1128 +1,1201 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulasi TKB PLN Non-Teknik (Premium)</title>
-    
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulasi TKB PLN Non-Teknik (Premium)</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <style>
-        /* ========================
-           1. VARIABLES & THEME
-           ======================== */
-        :root {
-            /* Warna Utama PLN */
-            --pln-blue: #007bff;
-            --pln-blue-dark: #0056b3;
-            --pln-green: #28a745;
-            --pln-red: #dc3545;
-            --pln-yellow: #ffc107;
-            
-            /* Warna Dasar (Light Mode) */
-            --bg-color: #f8f9fa;
-            --card-bg: #ffffff;
-            --text-color: #333333;
-            --text-muted: #6c757d;
-            --border-color: #dddddd;
-            --hover-bg: #f0f7ff;
-            --option-bg: #ffffff;
-            
-            --border-radius: 12px;
-            --shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-        }
+    <style>
+        /* ========================
+           1. VARIABLES & THEME
+           ======================== */
+        :root {
+            /* Warna Utama PLN */
+            --pln-blue: #007bff;
+            --pln-blue-dark: #0056b3;
+            --pln-green: #28a745;
+            --pln-red: #dc3545;
+            --pln-yellow: #ffc107;
+            
+            /* Warna Dasar (Light Mode) */
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --text-muted: #6c757d;
+            --border-color: #dddddd;
+            --hover-bg: #f0f7ff;
+            --option-bg: #ffffff;
+            
+            --border-radius: 12px;
+            --shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        }
 
-        /* DARK MODE VARIABLES */
-        body.dark-mode {
-            --bg-color: #121212;
-            --card-bg: #1e1e1e;
-            --text-color: #e0e0e0;
-            --text-muted: #a0a0a0;
-            --border-color: #333333;
-            --hover-bg: #2c3e50;
-            --option-bg: #252525;
-            --pln-blue-dark: #4dabf7; 
-        }
+        /* DARK MODE VARIABLES */
+        body.dark-mode {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-color: #e0e0e0;
+            --text-muted: #a0a0a0;
+            --border-color: #333333;
+            --hover-bg: #2c3e50;
+            --option-bg: #252525;
+            --pln-blue-dark: #4dabf7; 
+        }
 
-        /* ========================
-           2. GLOBAL LAYOUT
-           ======================== */
-        body {
-            font-family: 'Inter', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
+        /* ========================
+           2. GLOBAL LAYOUT
+           ======================== */
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
 
-        .container {
-            width: 90%;
-            max-width: 800px;
-            margin: 20px auto;
-            background-color: var(--card-bg);
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            overflow: hidden;
-    _       transition: height 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-        }
+        .container {
+            width: 90%;
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: height 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
 
-        /* Header untuk Theme Toggle (Agar tidak tabrakan dengan konten) */
-        .theme-switch-wrapper {
-            display: flex;
-            justify-content: flex-end;
-            padding: 15px 20px 0 20px;
-            background-color: var(--card-bg);
-            z-index: 10;
-        }
+        /* Header untuk Theme Toggle (Agar tidak tabrakan dengan konten) */
+        .theme-switch-wrapper {
+            display: flex;
+            justify-content: flex-end;
+            padding: 15px 20px 0 20px;
+            background-color: var(--card-bg);
+            z-index: 10;
+        }
 
-        .theme-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 1.5rem;
-            color: var(--text-muted);
-            transition: transform 0.3s ease;
-            padding: 5px;
-        }
-        .theme-btn:hover { transform: scale(1.1); color: var(--pln-blue); }
+        .theme-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            transition: transform 0.3s ease;
+            padding: 5px;
+        }
+        .theme-btn:hover { transform: scale(1.1); color: var(--pln-blue); }
 
-        /* Animasi Fade In */
-        .fade-in-animation { animation: fadeIn 0.5s ease-out forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* Animasi Fade In */
+        .fade-in-animation { animation: fadeIn 0.5s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Padding Konten Utama */
-        #welcome-screen, #quiz-screen, #results-screen {
-            padding: 10px 40px 40px 40px; 
-        }
-      
-      /* Tambahan: Error Message (Ini dari file Anda sebelumnya) */
-      .error-message {
-          color: var(--pln-red);
-          background-color: rgba(220, 53, 69, 0.1);
-          border: 1px solid var(--pln-red);
-          padding: 15px;
-          border-radius: var(--border-radius);
-          text-align: center;
-          margin-top: 15px;
-          display: none; /* Sembunyi by default */
-      }
+        /* Padding Konten Utama */
+        #welcome-screen, #quiz-screen, #results-screen {
+            padding: 10px 40px 40px 40px; 
+        }
 
-        /* ========================
-           3. WELCOME SCREEN
-           ======================== */
-        #welcome-screen h1 {
-            color: var(--pln-blue);
-            text-align: center;
-            margin-bottom: 15px;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-        }
+        /* ========================
+           3. WELCOME SCREEN
+           ======================== */
+        #welcome-screen h1 {
+            color: var(--pln-blue);
+            text-align: center;
+            margin-bottom: 15px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
 
-        .welcome-message {
-            text-align: center;
-            font-size: 0.95rem;
-            line-height: 1.6;
-            background-color: var(--bg-color);
-            padding: 20px;
-            border-radius: var(--border-radius);
-            margin: 20px 0;
-            border: 1px solid var(--border-color);
-        }
+        .welcome-message {
+            text-align: center;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            background-color: var(--bg-color);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin: 20px 0;
+            border: 1px solid var(--border-color);
+        }
 
-        .social-links { text-align: center; margin-bottom: 30px; }
-        .social-links a {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            margin: 5px 10px;
-            text-decoration: none;
-            color: var(--pln-blue);
-            font-weight: 600;
-            padding: 8px 16px;
-            border-radius: 50px;
-            background-color: var(--bg-color);
-            transition: all 0.3s ease;
-            border: 1px solid transparent;
-        }
-        .social-links a:hover { background-color: var(--pln-blue); color: white; transform: translateY(-2px); }
-        .social-links a svg { width: 18px; height: 18px; margin-right: 8px; }
+        .social-links { text-align: center; margin-bottom: 30px; }
+        .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin: 5px 10px;
+            text-decoration: none;
+            color: var(--pln-blue);
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 50px;
+            background-color: var(--bg-color);
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+        .social-links a:hover { background-color: var(--pln-blue); color: white; transform: translateY(-2px); }
+        .social-links a svg { width: 18px; height: 18px; margin-right: 8px; }
 
-        /* Settings Grid */
-        .settings-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
-        @media (min-width: 600px) { .settings-grid { grid-template-columns: 1fr 1fr; } }
+        /* Settings Grid */
+        .settings-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+        @media (min-width: 600px) { .settings-grid { grid-template-columns: 1fr 1fr; } }
 
-        .setting-group { padding: 15px; border: 1px solid var(--border-color); border-radius: var(--border-radius); }
-        .setting-group label { font-weight: 600; display: block; margin-bottom: 10px; color: var(--pln-blue); }
-        .setting-group select { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid var(--border-color); background-color: var(--bg-color); color: var(--text-color); }
-        
-        .radio-group label { font-weight: normal; display: inline-flex; align-items: center; margin-right: 15px; margin-bottom: 5px; color: var(--text-color); cursor: pointer; }
-        .radio-group input[type="radio"] { margin-right: 5px; accent-color: var(--pln-blue); }
+        .setting-group { padding: 15px; border: 1px solid var(--border-color); border-radius: var(--border-radius); }
+        .setting-group label { font-weight: 600; display: block; margin-bottom: 10px; color: var(--pln-blue); }
+        .setting-group select { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid var(--border-color); background-color: var(--bg-color); color: var(--text-color); }
+        
+        .radio-group label { font-weight: normal; display: inline-flex; align-items: center; margin-right: 15px; margin-bottom: 5px; color: var(--text-color); cursor: pointer; }
+        .radio-group input[type="radio"] { margin-right: 5px; accent-color: var(--pln-blue); }
 
-        .btn-primary {
-            display: block; width: 100%; padding: 14px; font-size: 1.1rem; font-weight: 700;
-            color: #ffffff; background-color: var(--pln-blue); border: none; border-radius: var(--border-radius);
-            cursor: pointer; transition: all 0.3s ease; margin-top: 25px; box-shadow: 0 4px 6px rgba(0,123,255,0.2);
-        }
-        .btn-primary:hover { background-color: var(--pln-blue-dark); transform: translateY(-2px); }
-        .btn-primary:disabled { background-color: var(--text-muted); cursor: not-allowed; transform: none; box-shadow: none; }
+        .btn-primary {
+            display: block; width: 100%; padding: 14px; font-size: 1.1rem; font-weight: 700;
+            color: #ffffff; background-color: var(--pln-blue); border: none; border-radius: var(--border-radius);
+            cursor: pointer; transition: all 0.3s ease; margin-top: 25px; box-shadow: 0 4px 6px rgba(0,123,255,0.2);
+        }
+        .btn-primary:hover { background-color: var(--pln-blue-dark); transform: translateY(-2px); }
+        .btn-primary:disabled { background-color: var(--text-muted); cursor: not-allowed; transform: none; box-shadow: none; }
 
-        /* ========================
-           4. QUIZ SCREEN
-           ======================== */
-        #quiz-screen { display: none; }
-        
-        .quiz-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        #question-counter { font-size: 0.9rem; color: var(--text-muted); font-weight: 500; }
-        #timer-container { font-size: 1.1rem; font-weight: 700; color: var(--pln-blue); font-variant-numeric: tabular-nums; display: flex; align-items: center; gap: 10px;}
-        
-        #pause-btn { background: none; border: none; cursor: pointer; font-size: 0.9rem; color: var(--text-muted); padding: 5px; border-radius: 4px; }
-        #pause-btn:hover { color: var(--pln-blue); background-color: var(--hover-bg); }
+        /* ========================
+           4. QUIZ SCREEN
+           ======================== */
+        #quiz-screen { display: none; }
+        
+        .quiz-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        #question-counter { font-size: 0.9rem; color: var(--text-muted); font-weight: 500; }
+        #timer-container { font-size: 1.1rem; font-weight: 700; color: var(--pln-blue); font-variant-numeric: tabular-nums; display: flex; align-items: center; gap: 10px;}
+        
+        #pause-btn { background: none; border: none; cursor: pointer; font-size: 0.9rem; color: var(--text-muted); padding: 5px; border-radius: 4px; }
+        #pause-btn:hover { color: var(--pln-blue); background-color: var(--hover-bg); }
 
-        .progress-track { width: 100%; height: 6px; background-color: var(--border-color); border-radius: 10px; overflow: hidden; margin-bottom: 25px; }
-        .progress-fill { height: 100%; background-color: var(--pln-green); width: 0%; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .progress-track { width: 100%; height: 6px; background-color: var(--border-color); border-radius: 10px; overflow: hidden; margin-bottom: 25px; }
+        .progress-fill { height: 100%; background-color: var(--pln-green); width: 0%; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
 
-        #topic-badge { display: inline-block; padding: 4px 10px; border-radius: 20px; background-color: var(--bg-color); color: var(--text-muted); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid var(--border-color); margin-bottom: 10px; }
-        #question-text { font-size: 1.2rem; font-weight: 600; line-height: 1.6; margin-bottom: 25px; color: var(--text-color); }
+        #topic-badge { display: inline-block; padding: 4px 10px; border-radius: 20px; background-color: var(--bg-color); color: var(--text-muted); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid var(--border-color); margin-bottom: 10px; }
+        #question-text { font-size: 1.2rem; font-weight: 600; line-height: 1.6; margin-bottom: 25px; color: var(--text-color); }
 
-        .options-container { display: flex; flex-direction: column; gap: 12px; }
-        
-        .option-box {
-            display: flex; padding: 15px 20px; border: 1px solid var(--border-color); border-radius: 10px;
-            cursor: pointer; transition: all 0.2s ease; background-color: var(--option-bg); align-items: center;
-        }
-        .option-box:not(.disabled):hover { background-color: var(--hover-bg); border-color: var(--pln-blue); transform: translateX(5px); }
-        .option-box.selected { font-weight: 600; border-color: var(--pln-blue); }
-        .option-box.correct { background-color: rgba(40, 167, 69, 0.1); border-color: var(--pln-green); color: var(--pln-green); font-weight: 600; }
-        .option-box.incorrect { background-color: rgba(220, 53, 69, 0.1); border-color: var(--pln-red); color: var(--pln-red); }
-        .option-box.disabled { cursor: not-allowed; opacity: 0.7; transform: none !important; }
+        .options-container { display: flex; flex-direction: column; gap: 12px; }
+        
+        .option-box {
+            display: flex; padding: 15px 20px; border: 1px solid var(--border-color); border-radius: 10px;
+            cursor: pointer; transition: all 0.2s ease; background-color: var(--option-bg); align-items: center;
+        }
+        .option-box:not(.disabled):hover { background-color: var(--hover-bg); border-color: var(--pln-blue); transform: translateX(5px); }
+        .option-box.selected { font-weight: 600; border-color: var(--pln-blue); }
+        .option-box.correct { background-color: rgba(40, 167, 69, 0.1); border-color: var(--pln-green); color: var(--pln-green); font-weight: 600; }
+        .option-box.incorrect { background-color: rgba(220, 53, 69, 0.1); border-color: var(--pln-red); color: var(--pln-red); }
+        .option-box.disabled { cursor: not-allowed; opacity: 0.7; transform: none !important; }
 
-        .option-letter {
-            font-weight: 700; margin-right: 15px; color: var(--pln-blue); width: 28px; height: 28px;
-            display: flex; align-items: center; justify-content: center; border-radius: 50%;
-            background-color: var(--bg-color); font-size: 0.9rem; border: 1px solid var(--border-color); flex-shrink: 0;
-        }
-        .option-box.correct .option-letter { background-color: var(--pln-green); color: white; border-color: var(--pln-green); }
-        .option-box.incorrect .option-letter { background-color: var(--pln-red); color: white; border-color: var(--pln-red); }
+        .option-letter {
+            font-weight: 700; margin-right: 15px; color: var(--pln-blue); width: 28px; height: 28px;
+            display: flex; align-items: center; justify-content: center; border-radius: 50%;
+            background-color: var(--bg-color); font-size: 0.9rem; border: 1px solid var(--border-color); flex-shrink: 0;
+        }
+        .option-box.correct .option-letter { background-color: var(--pln-green); color: white; border-color: var(--pln-green); }
+        .option-box.incorrect .option-letter { background-color: var(--pln-red); color: white; border-color: var(--pln-red); }
 
-        /* --- Footer Layout --- */
-        .quiz-footer { margin-top: 30px; display: flex; justify-content: space-between; align-items: stretch; gap: 10px; }
-        .quiz-footer-right { display: flex; justify-content: flex-end; align-items: stretch; gap: 10px; }
-        
-        .btn-secondary, .btn-tertiary {
-            padding: 12px 24px; font-size: 0.95rem; font-weight: 600; border: none; border-radius: var(--border-radius);
-            cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center;
-        }
-        .btn-secondary { background-color: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color); }
-        .btn-secondary:hover { background-color: var(--border-color); }
-        .btn-tertiary { background-color: rgba(0, 123, 255, 0.1); color: var(--pln-blue); }
-        .btn-tertiary:hover { background-color: rgba(0, 123, 255, 0.2); }
-        .btn-tertiary:disabled { background-color: var(--bg-color); color: var(--text-muted); cursor: not-allowed; }
-        
-        .quiz-footer .btn-primary, .quiz-footer .btn-secondary, .quiz-footer .btn-tertiary { margin-top: 0; height: auto; min-height: 48px; width: auto; }
-        
-        #next-btn, #review-nav-container, #back-to-results-btn { display: none; }
-        #review-nav-container { display: flex; align-items: stretch; gap: 10px; }
+        /* --- Footer Layout --- */
+        .quiz-footer { margin-top: 30px; display: flex; justify-content: space-between; align-items: stretch; gap: 10px; }
+        .quiz-footer-right { display: flex; justify-content: flex-end; align-items: stretch; gap: 10px; }
+        
+        .btn-secondary, .btn-tertiary {
+            padding: 12px 24px; font-size: 0.95rem; font-weight: 600; border: none; border-radius: var(--border-radius);
+            cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center;
+        }
+        .btn-secondary { background-color: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color); }
+        .btn-secondary:hover { background-color: var(--border-color); }
+        .btn-tertiary { background-color: rgba(0, 123, 255, 0.1); color: var(--pln-blue); }
+        .btn-tertiary:hover { background-color: rgba(0, 123, 255, 0.2); }
+        .btn-tertiary:disabled { background-color: var(--bg-color); color: var(--text-muted); cursor: not-allowed; }
+        
+        .quiz-footer .btn-primary, .quiz-footer .btn-secondary, .quiz-footer .btn-tertiary { margin-top: 0; height: auto; min-height: 48px; width: auto; }
+        
+        #next-btn, #review-nav-container, #back-to-results-btn { display: none; }
+        #review-nav-container { display: flex; align-items: stretch; gap: 10px; }
 
-        #explanation-container {
-            display: none; margin-top: 25px; padding: 20px; background-color: rgba(255, 193, 7, 0.1);
-            border-left: 4px solid var(--pln-yellow); border-radius: 4px; line-height: 1.7;
-        }
-        body.dark-mode #explanation-container { background-color: rgba(255, 193, 7, 0.05); }
-        #explanation-container h4 { margin: 0 0 10px 0; color: #d39e00; font-weight: 700; }
-        #explanation-text { color: var(--text-color); }
-        #explain-btn { display: none; margin-top: 0; }
+        #explanation-container {
+            display: none; margin-top: 25px; padding: 20px; background-color: rgba(255, 193, 7, 0.1);
+            border-left: 4px solid var(--pln-yellow); border-radius: 4px; line-height: 1.7;
+        }
+        body.dark-mode #explanation-container { background-color: rgba(255, 193, 7, 0.05); }
+        #explanation-container h4 { margin: 0 0 10px 0; color: #d39e00; font-weight: 700; }
+        #explanation-text { color: var(--text-color); }
+        #explain-btn { display: none; margin-top: 0; }
 
-        /* ========================
-           5. RESULTS SCREEN
-           ======================== */
-        #results-screen { padding: 40px; text-align: center; display: none; }
-        #results-screen h2 { color: var(--pln-blue); margin-bottom: 10px; font-weight: 800; }
-        #score-display { font-size: 4rem; font-weight: 800; color: var(--pln-blue); margin: 10px 0; letter-spacing: -2px; }
-        #score-details { font-size: 1.2rem; margin-bottom: 30px; color: var(--text-muted); }
-        
-        .breakdown-container { margin: 20px 0 30px 0; text-align: left; background-color: var(--bg-color); padding: 15px; border-radius: var(--border-radius); border: 1px solid var(--border-color); }
-        .breakdown-title { font-weight: 700; margin-bottom: 10px; font-size: 0.95rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
-        .breakdown-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border-color); font-size: 0.95rem; }
-        .breakdown-row:last-child { border-bottom: none; }
-        .breakdown-score { font-weight: 700; color: var(--pln-blue); }
-        .results-actions { display: flex; flex-direction: column; gap: 15px; }
+        /* ========================
+           5. RESULTS SCREEN
+           ======================== */
+        #results-screen { padding: 40px; text-align: center; display: none; }
+        #results-screen h2 { color: var(--pln-blue); margin-bottom: 10px; font-weight: 800; }
+        #score-display { font-size: 4rem; font-weight: 800; color: var(--pln-blue); margin: 10px 0; letter-spacing: -2px; }
+        #score-details { font-size: 1.2rem; margin-bottom: 30px; color: var(--text-muted); }
+        
+        .breakdown-container { margin: 20px 0 30px 0; text-align: left; background-color: var(--bg-color); padding: 15px; border-radius: var(--border-radius); border: 1px solid var(--border-color); }
+        .breakdown-title { font-weight: 700; margin-bottom: 10px; font-size: 0.95rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+        .breakdown-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border-color); font-size: 0.95rem; }
+        .breakdown-row:last-child { border-bottom: none; }
+        .breakdown-score { font-weight: 700; color: var(--pln-blue); }
+        .results-actions { display: flex; flex-direction: column; gap: 15px; }
 
-        /* ========================
-           6. MODALS & UTILS
-           ======================== */
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px); justify-content: center; align-items: center; animation: fadeIn 0.3s ease-out; }
-        .modal-content { background-color: var(--card-bg); padding: 30px; border-radius: var(--border-radius); text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.3); width: 85%; max-width: 450px; border: 1px solid var(--border-color); }
-        
-        .loader { border: 4px solid var(--bg-color); border-top: 4px solid var(--pln-blue); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 20px auto; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
-        #pause-overlay { z-index: 2000; background-color: rgba(0,0,0,0.8); }
-        #pause-overlay h2 { color: white; }
-        
-        #analysis-modal-content, #explanation-modal-content { max-width: 650px; text-align: left; }
-        #analysis-text-content, #explanation-modal-text { white-space: pre-wrap; line-height: 1.7; max-height: 60vh; overflow-y: auto; background-color: var(--bg-color); padding: 20px; border-radius: var(--border-radius); margin-bottom: 20px; border: 1px solid var(--border-color); font-size: 0.95rem; color: var(--text-color); }
+        /* ========================
+           6. MODALS & UTILS
+           ======================== */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px); justify-content: center; align-items: center; animation: fadeIn 0.3s ease-out; }
+        .modal-content { background-color: var(--card-bg); padding: 30px; border-radius: var(--border-radius); text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.3); width: 85%; max-width: 450px; border: 1px solid var(--border-color); }
+        
+        .loader { border: 4px solid var(--bg-color); border-top: 4px solid var(--pln-blue); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 20px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        #pause-overlay { z-index: 2000; background-color: rgba(0,0,0,0.8); }
+        #pause-overlay h2 { color: white; }
+        
+        #analysis-modal-content, #explanation-modal-content { max-width: 650px; text-align: left; }
+        #analysis-text-content, #explanation-modal-text { white-space: pre-wrap; line-height: 1.7; max-height: 60vh; overflow-y: auto; background-color: var(--bg-color); padding: 20px; border-radius: var(--border-radius); margin-bottom: 20px; border: 1px solid var(--border-color); font-size: 0.95rem; color: var(--text-color); }
 
-        /* Responsive */
-    _     @media (max-width: 600px) {
-            .container { width: 100%; margin: 0; border-radius: 0; min-height: 100vh; box-shadow: none; }
-            #welcome-screen, #quiz-screen, #results-screen { padding: 10px 20px 30px 20px; }
-            
-            /* Footer Mobile Layout */
-            .quiz-footer { flex-direction: column; align-items: stretch; }
-            .quiz-footer-right { flex-direction: column; align-items: stretch; }
-            #review-nav-container { display: flex; flex-direction: column; align-items: stretch; gap: 10px; }
-            .quiz-footer .btn-primary { width: 100%; }
-        }
-    </style>
+        /* Responsive */
+        @media (max-width: 600px) {
+            .container { width: 100%; margin: 0; border-radius: 0; min-height: 100vh; box-shadow: none; }
+            #welcome-screen, #quiz-screen, #results-screen { padding: 10px 20px 30px 20px; }
+            
+            /* Footer Mobile Layout */
+            .quiz-footer { flex-direction: column; align-items: stretch; }
+            .quiz-footer-right { flex-direction: column; align-items: stretch; }
+            #review-nav-container { display: flex; flex-direction: column; align-items: stretch; gap: 10px; }
+            .quiz-footer .btn-primary { width: 100%; }
+        }
+    </style>
 </head>
 <body>
 
-    <div class="container fade-in-animation">
-        <div class="theme-switch-wrapper">
-            <button id="theme-toggle" class="theme-btn" title="Ganti Mode Gelap/Terang">🌙</button>
-        </div>
+    <div class="container fade-in-animation">
+        <div class="theme-switch-wrapper">
+            <button id="theme-toggle" class="theme-btn" title="Ganti Mode Gelap/Terang">🌙</button>
+        </div>
 
-        <div id="welcome-screen">
-            <h1>Simulasi TKB PLN (AI)</h1>
-            <div class="welcome-message">
-                <strong>Selamat Datang Para Pejuang LoKer!</strong><br>
-                Simulasi ini GRATIS ya, aku membuat ini agar kita semua dapat belajar secara maksimal dan bersaing secara sehat. Karena siapapun yang lolos nanti memang dan haruslah yang terbaik.
-            </div>
+        <div id="welcome-screen">
+            <h1>Simulasi TKB PLN (AI)</h1>
+            <div class="welcome-message">
+                <strong>Selamat Datang Para Pejuang LoKer!</strong><br>
+                Simulasi ini GRATIS ya, aku membuat ini agar kita semua dapat belajar secara maksimal dan bersaing secara sehat. Karena siapapun yang lolos nanti memang dan haruslah yang terbaik.
+            </div>
 
-            <div class="social-links">
-                <a href="https://www.instagram.com/al.akbar__" rel="noopener noreferrer">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="currentColor"><path d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9 26.3 26.2 58 34.4 93.9 36.2 37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"/></svg>
-                    @al.akbar__
-                </a>
-                <a href="https://www.linkedin.com/in/saiful-a-742420118" rel="noopener noreferrer">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="currentColor"><path d="M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.5 0 53.8a53.79 53.79 0 0 1 53.79-54.3c29.7 0 53.79 24.5 53.79 54.3a53.79 53.79 0 0 1-53.79 54.3zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.29 0-55.69 37.7-55.69 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.69-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3V448z"/></svg>
-                    Saiful Akbar
-                </a>
-            </div>
+            <div class="social-links">
+                <a href="https://www.instagram.com/al.akbar__" rel="noopener noreferrer">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="currentColor"><path d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9 26.3 26.2 58 34.4 93.9 36.2 37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"/></svg>
+                    @al.akbar__
+                </a>
+                <a href="https://www.linkedin.com/in/saiful-a-742420118" rel="noopener noreferrer">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="currentColor"><path d="M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.5 0 53.8a53.79 53.79 0 0 1 53.79-54.3c29.7 0 53.79 24.5 53.79 54.3a53.79 53.79 0 0 1-53.79 54.3zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.29 0-55.69 37.7-55.69 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.69-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3V448z"/></svg>
+                    Saiful Akbar
+                </a>
+            </div>
 
-            <div class="settings-grid">
-                <div class="setting-group">
-                    <label for="quiz-type">Pilih Tipe Soal:</label>
-                    <select id="quiz-type">
-                        <option value="campuran" selected>Campuran (Default)</option>
-                        <option value="pln">Pengetahuan Umum PLN & RUPTL</option>
-                        <option value="keuangan">Manajemen Keuangan</option>
-                        <option value="operasional">Manajemen Operasional</option>
-                        <option value="pemasaran">Manajemen Pemasaran</option>
-                        <option value="sdm">Manajemen SDM</option>
-                        <option value="strategis_gcg">Manajemen Strategis & GCG</option>
-                    </select>
-                </div>
-                <div class="setting-group">
-                    <label>Jumlah Soal:</label>
-                    <div class="radio-group" id="num-questions">
-                        <label><input type="radio" name="num-q" value="15" checked> 15</label>
-                        <label><input type="radio" name="num-q" value="25"> 25</label>
-                        <label><input type="radio" name="num-q" value="50"> 50</label>
-                    </div>
-                </div>
-                <div class="setting-group">
-                    <label>Aktifkan Timer?</label>
-                    <div class="radio-group" id="timer-active">
-                        <label><input type="radio" name="timer-act" value="ya" checked> Ya</label>
-                        <label><input type="radio" name="timer-act" value="tidak"> Tidak</label>
-                    </div>
-                </div>
-                <div class="setting-group" id="timer-options">
-                    <label for="timer-type">Tipe Timer:</label>
-                    <select id="timer-type">
-                        <option value="per-soal" selected>Per Soal</option>
-                        <option value="keseluruhan">Keseluruhan</option>
-                    </select>
-                    
-                    <div id="timer-per-soal-settings">
-                        <label for="timer-per-soal" style="margin-top: 10px;">Waktu per Soal (detik):</label>
-                        <select id="timer-per-soal">
-                            <option value="30">30</option>
-                            <option value="45" selected>45</option>
-                            <option value="60">60</option>
-                            <option value="75">75</option>
-                            <option value="90">90</option>
-                        </select>
-                    </div>
-                    <div id="timer-total-settings" style="display: none;">
-                        <label for="timer-total" style="margin-top: 10px;">Total Waktu:</label>
-                        <select id="timer-total"></select>
-                    </div>
-                    
-                    <label style="margin-top: 10px;">Aktifkan Tombol Pause?</label>
-                    <div class="radio-group" id="pause-active">
-                        <label><input type="radio" name="pause-act" value="ya" checked> Ya</label>
-                        <label><input type="radio" name="pause-act" value="tidak"> Tidak</label>
-                    </div>
-                </div>
-                <div class="setting-group">
-                    <label>Tampilkan Status Jawaban (Benar/Salah)?</label>
-                    <div class="radio-group" id="show-status">
-                        <label><input type="radio" name="show-stat" value="ya" checked> Ya</label>
-                        <label><input type="radio" name="show-stat" value="tidak"> Tidak</label>
-            _       </div>
-                </div>
-                <div class="setting-group" id="show-correct-option">
-                    <label>Jika Salah, Tampilkan Jawaban Benar?</label>
-                    <div class="radio-group" id="show-correct">
-                        <label><input type="radio" name="show-corr" value="ya" checked> Ya</label>
-                        <label><input type="radio" name="show-corr" value="tidak"> Tidak</label>
-                    </div>
-              _ </div>
-            </div>
+            <div class="settings-grid">
+                <div class="setting-group">
+                    <label for="quiz-type">Pilih Tipe Soal:</label>
+                    <select id="quiz-type">
+                        <option value="campuran" selected>Campuran (Default)</option>
+                        <option value="pln">Pengetahuan Umum PLN & RUPTL</option>
+                        <option value="keuangan">Manajemen Keuangan</option>
+                        <option value="operasional">Manajemen Operasional</option>
+                        <option value="pemasaran">Manajemen Pemasaran</option>
+                        <option value="sdm">Manajemen SDM</option>
+                        <option value="strategis_gcg">Manajemen Strategis & GCG</option>
+                    </select>
+                </div>
+                <div class="setting-group">
+                    <label>Jumlah Soal:</label>
+                    <div class="radio-group" id="num-questions">
+                        <label><input type="radio" name="num-q" value="15" checked> 15</label>
+                        <label><input type="radio" name="num-q" value="25"> 25</label>
+                        <label><input type="radio" name="num-q" value="50"> 50</label>
+                    </div>
+                </div>
+                <div class="setting-group">
+                    <label>Aktifkan Timer?</label>
+                    <div class="radio-group" id="timer-active">
+                        <label><input type="radio" name="timer-act" value="ya" checked> Ya</label>
+                        <label><input type="radio" name="timer-act" value="tidak"> Tidak</label>
+                    </div>
+                </div>
+                <div class="setting-group" id="timer-options">
+                    <label for="timer-type">Tipe Timer:</label>
+                    <select id="timer-type">
+                        <option value="per-soal" selected>Per Soal</option>
+                        <option value="keseluruhan">Keseluruhan</option>
+                    </select>
+                    
+                    <div id="timer-per-soal-settings">
+                        <label for="timer-per-soal" style="margin-top: 10px;">Waktu per Soal (detik):</label>
+                        <select id="timer-per-soal">
+                            <option value="30">30</option>
+                            <option value="45" selected>45</option>
+                            <option value="60">60</option>
+                            <option value="75">75</option>
+                            <option value="90">90</option>
+                        </select>
+                    </div>
+                    <div id="timer-total-settings" style="display: none;">
+                        <label for="timer-total" style="margin-top: 10px;">Total Waktu:</label>
+                        <select id="timer-total"></select>
+                    </div>
+                    
+                    <label style="margin-top: 10px;">Aktifkan Tombol Pause?</label>
+                    <div class="radio-group" id="pause-active">
+                        <label><input type="radio" name="pause-act" value="ya" checked> Ya</label>
+                        <label><input type="radio" name="pause-act" value="tidak"> Tidak</label>
+                    </div>
+                </div>
+                <div class="setting-group">
+                    <label>Tampilkan Status Jawaban (Benar/Salah)?</label>
+                    <div class="radio-group" id="show-status">
+                        <label><input type="radio" name="show-stat" value="ya" checked> Ya</label>
+                        <label><input type="radio" name="show-stat" value="tidak"> Tidak</label>
+                    </div>
+                </div>
+                <div class="setting-group" id="show-correct-option">
+                    <label>Jika Salah, Tampilkan Jawaban Benar?</label>
+                    <div class="radio-group" id="show-correct">
+                        <label><input type="radio" name="show-corr" value="ya" checked> Ya</label>
+                        <label><input type="radio" name="show-corr" value="tidak"> Tidak</label>
+                    </div>
+                </div>
+            </div>
 
-            <button id="generate-btn" class="btn-primary">Generate Soal</button>
-            <p class="error-message" id="welcome-error"></p>
-        </div>
+            <button id="generate-btn" class="btn-primary">Generate Soal</button>
+        </div>
 
-        <div id="quiz-screen">
-            <header class="quiz-header">
-                <span id="question-counter">Soal 1 dari 15</span>
-                <div id="timer-container" style="display: none;">
-                    <span>Waktu: <span id="timer-display">45</span>s</span>
-                    <button id="pause-btn" style="display: none;">❚❚</button>
-                </div>
-            </header>
+        <div id="quiz-screen">
+            <header class="quiz-header">
+                <span id="question-counter">Soal 1 dari 15</span>
+                <div id="timer-container" style="display: none;">
+                    <span>Waktu: <span id="timer-display">45</span>s</span>
+                    <button id="pause-btn" style="display: none;">❚❚</button>
+                </div>
+            </header>
 
-            <div class="progress-track">
-                <div class="progress-fill" id="progress-bar-fill"></div>
-            </div>
-            
-            <main>
-                <span id="topic-badge">Loading...</span>
-                
-                <div id="question-text">Memuat soal...</div>
-                <div class="options-container" id="options-container">
-                    </div>
-                
-                <div id="explanation-container">
-                    <h4>Penjelasan</h4>
-                    <p id="explanation-text"></p>
-                </div>
-            </main>
-            
-            <footer class="quiz-footer">
-                <button id="explain-btn" class="btn-tertiary">Jelaskan Lebih Lanjut</button>
-                
-                <div class="quiz-footer-right">
-                    <button id="next-btn" class="btn-primary">Berikutnya</button>
-                    <div id="review-nav-container">
-                        <button id="review-prev-btn" class="btn-secondary">Sebelumnya</button>
-                        <button id="review-next-btn" class="btn-secondary">Berikutnya</button>
-                    </div>
-                    <button id="back-to-results-btn" class="btn-primary">Kembali ke Hasil</button>
-                </div>
-            </footer>
-        </div>
-        
-        <div id="results-screen">
-            <h2>Simulasi Selesai!</h2>
-            <p>Skor Akhir Anda:</p>
-            <div id="score-display">100</div>
-            <p id="score-details">Anda menjawab benar 15 dari 15 soal.</p>
-            
-            <div class="breakdown-container" id="topic-breakdown">
-                </div>
-
-            <div class="results-actions">
-                <button id="analysis-btn" class="btn-primary">Analisis Performa (AI)</button>
-                <button id="review-btn" class="btn-secondary">Tinjau Kembali Jawaban Saya</button>
-                <button id="home-btn" class="btn-tertiary">Kembali ke Halaman Awal</button>
-            </div>
-        </div>
-
-    </div>
-
-    <div id="loading-modal" class="modal">
-        <div class="modal-content">
-            <div class="loader"></div>
-            <p id="loading-text">15 Soal sedang dipersiapkan oleh AI. Mohon tunggu...</p>
-        </div>
-    </div>
-    
-    <div id="ready-modal" class="modal">
-        <div class="modal-content">
-            <h3 id="ready-title">15 Soal sudah siap.</h3>
-            <p>Apakah Anda ingin memulai kuisnya sekarang?</p>
-            <button id="start-quiz-btn" class="btn-primary" style="width: 100%;">Mulai Kuis</button>
-        </div>
-    </div>
-    
-    <div id="pause-overlay" class="modal">
-        <div class="modal-content">
-            <h2>Kuis Dijeda</h2>
-            <button id="resume-btn" class="btn-primary">Lanjutkan</button>
-        </div>
-    </div>
-
-    <div id="analysis-modal" class="modal">
-        <div class="modal-content" id="analysis-modal-content">
-            <h3>Analisis Performa (AI)</h3>
-            <div id="analysis-text-content">Memuat analisis...</div>
-            <button id="close-analysis-btn" class="btn-primary">Tutup</button>
-        </div>
-    </div>
-
-    <div id="explanation-modal" class="modal">
-        <div class="modal-content" id="explanation-modal-content">
-            <h3>Penjelasan Mendalam (AI)</h3>
-            <div id="explanation-modal-text"></div>
-            <button id="close-explanation-btn" class="btn-primary">Tutup</button>
-        </div>
-    </div>
-
-    <script>
-        // ========================
-        // == DOM ELEMENTS ==
-        // ========================
-        const welcomeScreen = document.getElementById('welcome-screen');
-        const quizScreen = document.getElementById('quiz-screen');
-        const resultsScreen = document.getElementById('results-screen');
-        const containerElement = document.querySelector('.container'); 
-        const themeToggle = document.getElementById('theme-toggle');
-
-        // Welcome Screen Elements
-        const quizTypeSelect = document.getElementById('quiz-type');
-        const numQuestionsRadio = document.getElementById('num-questions');
-        const timerActiveRadio = document.getElementById('timer-active');
-        const timerOptions = document.getElementById('timer-options');
-        const timerTypeSelect = document.getElementById('timer-type');
-        const timerPerSoalSettings = document.getElementById('timer-per-soal-settings');
-        const timerPerSoalSelect = document.getElementById('timer-per-soal');
-        const timerTotalSettings = document.getElementById('timer-total-settings');
-        const timerTotalSelect = document.getElementById('timer-total');
-        const pauseActiveRadio = document.getElementById('pause-active');
-        const showStatusRadio = document.getElementById('show-status');
-        const showCorrectOption = document.getElementById('show-correct-option');
-        const showCorrectRadio = document.getElementById('show-correct');
-        const generateBtn = document.getElementById('generate-btn');
-        const welcomeError = document.getElementById('welcome-error'); // Elemen error baru
-
-        // Modal Elements
-        const loadingModal = document.getElementById('loading-modal');
-        const loadingText = document.getElementById('loading-text');
-        const readyModal = document.getElementById('ready-modal');
-        const readyTitle = document.getElementById('ready-title');
-        const startQuizBtn = document.getElementById('start-quiz-btn');
-        const pauseOverlay = document.getElementById('pause-overlay');
-        const resumeBtn = document.getElementById('resume-btn');
-        const analysisModal = document.getElementById('analysis-modal');
-        const analysisTextContent = document.getElementById('analysis-text-content');
-        const closeAnalysisBtn = document.getElementById('close-analysis-btn');
-        const explanationModal = document.getElementById('explanation-modal');
-        const explanationModalText = document.getElementById('explanation-modal-text');
-        const closeExplanationBtn = document.getElementById('close-explanation-btn');
-
-        // Quiz Screen Elements
-        const questionCounter = document.getElementById('question-counter');
-        const progressBarFill = document.getElementById('progress-bar-fill');
-        const topicBadge = document.getElementById('topic-badge');
-        const timerContainer = document.getElementById('timer-container');
-        const timerDisplay = document.getElementById('timer-display');
-        const pauseBtn = document.getElementById('pause-btn');
-        const questionText = document.getElementById('question-text');
-        const optionsContainer = document.getElementById('options-container');
-        const nextBtn = document.getElementById('next-btn');
-        const explainBtn = document.getElementById('explain-btn');
-        const explanationContainer = document.getElementById('explanation-container');
-        const explanationText = document.getElementById('explanation-text');
-        const reviewNavContainer = document.getElementById('review-nav-container');
-        const reviewPrevBtn = document.getElementById('review-prev-btn');
-        const reviewNextBtn = document.getElementById('review-next-btn');
-        const backToResultsBtn = document.getElementById('back-to-results-btn');
-
-        // Results Screen Elements
-        const scoreDisplay = document.getElementById('score-display');
-        const scoreDetails = document.getElementById('score-details');
-        const topicBreakdown = document.getElementById('topic-breakdown');
-        const analysisBtn = document.getElementById('analysis-btn');
-        const reviewBtn = document.getElementById('review-btn');
-        const homeBtn = document.getElementById('home-btn');
-
-        // ========================
-        // == QUIZ STATE ==
-        // ========================
-        let quizSettings = {};
-        let quizQuestions = [];
-        let currentQuestionIndex = 0;
-        let score = 0;
-        let userAnswers = []; 
-        let timerInterval;
-        let timeLeft = 0;
-        let totalTime = 0;
-        let isPaused = false;
-        let isReviewMode = false;
-        let cachedAnalysisResult = null; 
-
-        // ===========================
-        // == VERCEL API INTEGRATION (SUDAH DIMODIFIKASI) ==
-        // ===========================
-        
-        /* * TIDAK ADA API KEY DI SINI. SEMUA AMAN DI BACKEND.
-         * Fungsi-fungsi di bawah ini sekarang memanggil /api/ Vercel Anda.
-         */
-
-        /**
-         * ERROR FIX: Penanganan Error & Retry yang Lebih Kuat
-         * MODIFIED: Fungsi ini sekarang memanggil backend Vercel kita, bukan Google.
-         */
-        async function fetchWithRetry(apiEndpoint, payload, maxRetries = 3) {
-            let attempt = 0;
-            while (attempt < maxRetries) {
-                try {
-                    // Memanggil endpoint backend kita (misal: /api/generateQuestions)
-                    const response = await fetch(apiEndpoint, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-
-                    if (!response.ok) {
-                        // Dapatkan error dari backend kita
-                        const errorResult = await response.json().catch(() => ({}));
-                        throw new Error(`Server Error (${response.status}): ${errorResult.error || response.statusText}`);
-                    }
-
-                    // Backend kita sudah mengirim JSON yang bersih
-                    return await response.json(); 
-
-                } catch (error) {
-                    console.error(`Attempt ${attempt + 1} failed for ${apiEndpoint}:`, error);
-                    attempt++;
-                    if (attempt >= maxRetries) throw error; 
-                    const delay = Math.pow(2, attempt) * 1000 + Math.random() * 1000;
-                    await new Promise(resolve => setTimeout(resolve, delay));
-                }
-            }
-        }
-        
-        async function getQuestionsFromGemini(settings) {
-            try {
-                // Hanya kirim settings ke backend, backend yang akan urus prompt
-                const result = await fetchWithRetry('/api/generateQuestions', settings);
+            <div class="progress-track">
+                <div class="progress-fill" id="progress-bar-fill"></div>
+            </div>
+            
+            <main>
+                <span id="topic-badge">Loading...</span>
                 
-                if (result.questions && result.questions.length > 0) {
-                    return result.questions;
-                }
-                throw new Error("Struktur respons API tidak valid dari backend.");
-            } catch (error) {
-                console.error("Error saat generate soal:", error);
-                // Menampilkan error di UI
-                welcomeError.textContent = `Gagal membuat soal: ${error.message}. Coba refresh dan kurangi jumlah soal.`;
-                welcomeError.style.display = 'block';
-                throw error; // Hentikan eksekusi
-            }
-        }
+                <div id="question-text">Memuat soal...</div>
+                <div class="options-container" id="options-container">
+                    </div>
+                
+                <div id="explanation-container">
+                    <h4>Penjelasan</h4>
+                    <p id="explanation-text"></p>
+                </div>
+            </main>
+            
+            <footer class="quiz-footer">
+                <button id="explain-btn" class="btn-tertiary">Jelaskan Lebih Lanjut</button>
+                
+                <div class="quiz-footer-right">
+                    <button id="next-btn" class="btn-primary">Berikutnya</button>
+                    <div id="review-nav-container">
+                        <button id="review-prev-btn" class="btn-secondary">Sebelumnya</button>
+                        <button id="review-next-btn" class="btn-secondary">Berikutnya</button>
+                    </div>
+                    <button id="back-to-results-btn" class="btn-primary">Kembali ke Hasil</button>
+                </div>
+            </footer>
+        </div>
+        
+        <div id="results-screen">
+            <h2>Simulasi Selesai!</h2>
+            <p>Skor Akhir Anda:</p>
+            <div id="score-display">100</div>
+            <p id="score-details">Anda menjawab benar 15 dari 15 soal.</p>
+            
+            <div class="breakdown-container" id="topic-breakdown">
+                </div>
 
-        async function getAnalysisFromGemini(answers) {
-            // Format data jawaban tetap di front-end
-            const simplifiedAnswers = answers.map((ans, index) => ({
-                nomor: index + 1,
-                kategori: ans.topic,
-                pertanyaan: ans.question,
-                jawabanUser: ans.userIndex !== -1 ? ans.options[ans.userIndex] : "Tidak Dijawab",
-                jawabanBenar: ans.options[ans.correctIndex],
-                isCorrect: ans.isCorrect
-            }));
+            <div class="results-actions">
+                <button id="analysis-btn" class="btn-primary">Analisis Performa (AI)</button>
+                <button id="review-btn" class="btn-secondary">Tinjau Kembali Jawaban Saya</button>
+                <button id="home-btn" class="btn-tertiary">Kembali ke Halaman Awal</button>
+            </div>
+        </div>
 
-            try {
-                // Kirim data jawaban ke backend
-                const result = await fetchWithRetry('/api/generateAnalysis', { answers: simplifiedAnswers });
-                return result.text; // Backend mengirim kembali { text: "..." }
-            } catch (error) {
-                return `Gagal menganalisis performa: ${error.message}`;
-            }
-        }
-        
-        async function getDeeperExplanation(question, baseExplanation) {
-            try {
-                // Kirim data soal ke backend
-                const result = await fetchWithRetry('/api/generateExplanation', { question, baseExplanation });
-                return result.text; // Backend mengirim kembali { text: "..." }
-             } catch (error) {
-                return `Gagal memuat penjelasan: ${error.message}`;
-             }
-        }
+    </div>
 
-        // ===========================
-        // == UI/UX LOGIC ==
-        // ===========================
-        
-        themeToggle.addEventListener('click', () => {
-            document.body.classList.toggle('dark-mode');
-            const isDark = document.body.classList.contains('dark-mode');
-            themeToggle.textContent = isDark ? '☀️' : '🌙';
-            localStorage.setItem('theme', isDark ? 'dark' : 'light');
-        });
+    <div id="loading-modal" class="modal">
+        <div class="modal-content">
+            <div class="loader"></div>
+            <p id="loading-text">15 Soal sedang dipersiapkan oleh AI. Mohon tunggu...</p>
+        </div>
+    </div>
+    
+    <div id="ready-modal" class="modal">
+        <div class="modal-content">
+            <h3 id="ready-title">15 Soal sudah siap.</h3>
+            <p>Apakah Anda ingin memulai kuisnya sekarang?</p>
+            <button id="start-quiz-btn" class="btn-primary" style="width: 100%;">Mulai Kuis</button>
+        </div>
+    </div>
+    
+    <div id="pause-overlay" class="modal">
+        <div class="modal-content">
+            <h2>Kuis Dijeda</h2>
+            <button id="resume-btn" class="btn-primary">Lanjutkan</button>
+        </div>
+    </div>
 
-        if (localStorage.getItem('theme') === 'dark') {
-            document.body.classList.add('dark-mode');
-            themeToggle.textContent = '☀️';
-        }
+    <div id="analysis-modal" class="modal">
+        <div class="modal-content" id="analysis-modal-content">
+            <h3>Analisis Performa (AI)</h3>
+            <div id="analysis-text-content">Memuat analisis...</div>
+            <button id="close-analysis-btn" class="btn-primary">Tutup</button>
+        </div>
+    </div>
 
-        function switchScreen(hideScreen, showScreen) {
-            containerElement.classList.remove('fade-in-animation');
-            void containerElement.offsetWidth; 
-            hideScreen.style.display = 'none';
-            showScreen.style.display = 'block';
-            containerElement.classList.add('fade-in-animation');
-            window.scrollTo(0, 0);
-        }
+    <div id="explanation-modal" class="modal">
+        <div class="modal-content" id="explanation-modal-content">
+            <h3>Penjelasan Mendalam (AI)</h3>
+            <div id="explanation-modal-text"></div>
+            <button id="close-explanation-btn" class="btn-primary">Tutup</button>
+        </div>
+    </div>
 
-        document.addEventListener('keydown', (e) => {
-            if (quizScreen.style.display !== 'block') return;
-            const key = e.key.toLowerCase();
-            const options = ['a', 'b', 'c', 'd', 'e'];
-            
-            if (options.includes(key)) {
-                const index = options.indexOf(key);
-                const optionBox = document.querySelector(`.option-box[data-index="${index}"]`);
-                if (optionBox && !optionBox.classList.contains('disabled')) selectAnswer(optionBox);
-            }
-            if (key === 'enter' || key === 'arrowright') {
-                if (nextBtn.style.display !== 'none') nextBtn.click();
-                if (reviewNextBtn.style.display !== 'none') reviewNextBtn.click();
-            }
-            if (key === 'arrowleft') {
-                if (reviewPrevBtn.style.display !== 'none') reviewPrevBtn.click();
-            }
-        });
+    <script>
+        // ========================
+        // == DOM ELEMENTS ==
+        // ========================
+        const welcomeScreen = document.getElementById('welcome-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const resultsScreen = document.getElementById('results-screen');
+        const containerElement = document.querySelector('.container'); 
+        const themeToggle = document.getElementById('theme-toggle');
 
-        function confirmExit(e) { e.preventDefault(); e.returnValue = ''; }
-        
-        timerActiveRadio.addEventListener('change', (e) => {
-            timerOptions.style.display = e.target.value === 'ya' ? 'block' : 'none';
-            if (e.target.value === 'ya') updateTimerOptions();
-        });
+        // Welcome Screen Elements
+        const quizTypeSelect = document.getElementById('quiz-type');
+        const numQuestionsRadio = document.getElementById('num-questions');
+        const timerActiveRadio = document.getElementById('timer-active');
+        const timerOptions = document.getElementById('timer-options');
+        const timerTypeSelect = document.getElementById('timer-type');
+        const timerPerSoalSettings = document.getElementById('timer-per-soal-settings');
+        const timerPerSoalSelect = document.getElementById('timer-per-soal');
+        const timerTotalSettings = document.getElementById('timer-total-settings');
+        const timerTotalSelect = document.getElementById('timer-total');
+        const pauseActiveRadio = document.getElementById('pause-active');
+        const showStatusRadio = document.getElementById('show-status');
+        const showCorrectOption = document.getElementById('show-correct-option');
+        const showCorrectRadio = document.getElementById('show-correct');
+        const generateBtn = document.getElementById('generate-btn');
 
-        timerTypeSelect.addEventListener('change', updateTimerOptions);
-        numQuestionsRadio.addEventListener('change', updateTimerOptions);
+        // Modal Elements
+        const loadingModal = document.getElementById('loading-modal');
+        const loadingText = document.getElementById('loading-text');
+        const readyModal = document.getElementById('ready-modal');
+        const readyTitle = document.getElementById('ready-title');
+        const startQuizBtn = document.getElementById('start-quiz-btn');
+        const pauseOverlay = document.getElementById('pause-overlay');
+        const resumeBtn = document.getElementById('resume-btn');
+        const analysisModal = document.getElementById('analysis-modal');
+        const analysisTextContent = document.getElementById('analysis-text-content');
+        const closeAnalysisBtn = document.getElementById('close-analysis-btn');
+        const explanationModal = document.getElementById('explanation-modal');
+        const explanationModalText = document.getElementById('explanation-modal-text');
+        const closeExplanationBtn = document.getElementById('close-explanation-btn');
 
-        function updateTimerOptions() {
-            if (timerTypeSelect.value === 'per-soal') {
-                timerPerSoalSettings.style.display = 'block';
-                timerTotalSettings.style.display = 'none';
-            } else {
-                timerPerSoalSettings.style.display = 'none';
-                timerTotalSettings.style.display = 'block';
-                const numQ = parseInt(document.querySelector('input[name="num-q"]:checked').value);
-                const baseTimes = [30, 60, 75, 90];
-                timerTotalSelect.innerHTML = '';
-                baseTimes.forEach(base => {
-                    const total = numQ * base;
-                    const minutes = Math.floor(total / 60);
-                    const seconds = total % 60;
-                    const option = document.createElement('option');
-                    option.value = total;
-                    option.textContent = `${minutes} menit ${seconds} detik (${base} detik/soal)`;
-                    timerTotalSelect.appendChild(option);
-                });
-            }
-        }
-        
-        showStatusRadio.addEventListener('change', (e) => {
-            showCorrectOption.style.display = e.target.value === 'ya' ? 'block' : 'none';
-        });
+        // Quiz Screen Elements
+        const questionCounter = document.getElementById('question-counter');
+        const progressBarFill = document.getElementById('progress-bar-fill');
+        const topicBadge = document.getElementById('topic-badge');
+        const timerContainer = document.getElementById('timer-container');
+        const timerDisplay = document.getElementById('timer-display');
+        const pauseBtn = document.getElementById('pause-btn');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const nextBtn = document.getElementById('next-btn');
+        const explainBtn = document.getElementById('explain-btn');
+        const explanationContainer = document.getElementById('explanation-container');
+        const explanationText = document.getElementById('explanation-text');
+        const reviewNavContainer = document.getElementById('review-nav-container');
+        const reviewPrevBtn = document.getElementById('review-prev-btn');
+        const reviewNextBtn = document.getElementById('review-next-btn');
+        const backToResultsBtn = document.getElementById('back-to-results-btn');
 
-        // ========================
-        // == CORE LOGIC ==
-        // ========================
-        
-        generateBtn.addEventListener('click', async () => {
-            quizSettings = {
-                type: quizTypeSelect.value,
-                num: parseInt(document.querySelector('input[name="num-q"]:checked').value),
-                timerActive: document.querySelector('input[name="timer-act"]:checked').value === 'ya',
-                timerType: timerTypeSelect.value,
-                timerPerSoal: parseInt(timerPerSoalSelect.value),
-                timerTotal: timerTotalSelect.value ? parseInt(timerTotalSelect.value) : (parseInt(document.querySelector('input[name="num-q"]:checked').value) * 45),
-                pauseActive: document.querySelector('input[name="pause-act"]:checked').value === 'ya',
-                showStatus: document.querySelector('input[name="show-stat"]:checked').value === 'ya',
-                showCorrect: document.querySelector('input[name="show-corr"]:checked').value === 'ya',
-            };
-            
-            welcomeError.style.display = 'none'; // Sembunyikan error lama
-            loadingText.textContent = `${quizSettings.num} Soal sedang dipersiapkan oleh AI...`;
-            loadingModal.style.display = 'flex';
-            generateBtn.disabled = true;
-            
-            try {
-                quizQuestions = await getQuestionsFromGemini(quizSettings);
-                if (quizQuestions.length === 0) throw new Error("AI tidak mengembalikan soal.");
+        // Results Screen Elements
+        const scoreDisplay = document.getElementById('score-display');
+        const scoreDetails = document.getElementById('score-details');
+        const topicBreakdown = document.getElementById('topic-breakdown');
+        const analysisBtn = document.getElementById('analysis-btn');
+        const reviewBtn = document.getElementById('review-btn');
+        const homeBtn = document.getElementById('home-btn');
 
-                loadingModal.style.display = 'none';
-                readyTitle.textContent = `${quizQuestions.length} Soal sudah siap.`;
-                readyModal.style.display = 'flex';
-            } catch (error) {
-                // Error sudah ditangani di dalam getQuestionsFromGemini
-                loadingModal.style.display = 'none';
-            } finally {
-                generateBtn.disabled = false;
-            }
-        });
+        // ========================
+        // == QUIZ STATE ==
+        // ========================
+        let quizSettings = {};
+        let quizQuestions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let userAnswers = []; 
+        let timerInterval;
+        let timeLeft = 0;
+        let totalTime = 0;
+        let isPaused = false;
+        let isReviewMode = false;
+        let cachedAnalysisResult = null; 
 
-        startQuizBtn.addEventListener('click', () => {
-  _         readyModal.style.display = 'none';
-            switchScreen(welcomeScreen, quizScreen);
-            window.addEventListener('beforeunload', confirmExit);
-            startQuiz();
-        });
+        // ===========================
+        // == GEMINI API INTEGRATION ==
+        // ===========================
+        
+        // Kunci API
+        const apiKey = ""; 
+        const generationApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
 
-        function startQuiz() {
-            currentQuestionIndex = 0;
-            score = 0;
-            userAnswers = [];
-            isReviewMode = false;
-            cachedAnalysisResult = null; 
-            
-            reviewNavContainer.style.display = 'none';
-            backToResultsBtn.style.display = 'none';
-            
-            if (quizSettings.timerActive) {
-                timerContainer.style.display = 'flex';
-                pauseBtn.style.display = quizSettings.pauseActive ? 'flex' : 'none';
-                if (quizSettings.timerType === 'keseluruhan') {
-                    totalTime = quizSettings.timerTotal;
-                    timeLeft = totalTime;
-                    startTotalTimer();
-                }
-            } else {
-                timerContainer.style.display = 'none';
-            }
-            showQuestion(currentQuestionIndex);
-        }
+        /**
+         * ERROR FIX: Penanganan Error & Retry yang Lebih Kuat
+         */
+        async function fetchWithRetry(apiUrl, payload, maxRetries = 3) {
+            let attempt = 0;
+            while (attempt < maxRetries) {
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
 
-        function showQuestion(index) {
-            if (index >= quizQuestions.length) {
-                endQuiz();
-                return;
-            }
-            
-            const progressPercent = ((index + 1) / quizQuestions.length) * 100;
-            progressBarFill.style.width = `${progressPercent}%`;
+                    if (!response.ok) {
+                        if (response.status >= 500) throw new Error(`Server error: ${response.status}`);
+                        const errorResult = await response.json().catch(() => ({}));
+                        throw new Error(`API Error: ${errorResult.error?.message || response.statusText}`);
+                    }
 
-            const q = quizQuestions[index];
-            topicBadge.textContent = q.t || "UMUM";
-            questionText.textContent = q.q.replace(/\\rightarrow/g, '→').replace(/\$/g, '');
-            questionCounter.textContent = `Soal ${index + 1} dari ${quizQuestions.length}`;
-            optionsContainer.innerHTML = '';
-            
-            const options = q.o && q.o.length > 0 ? q.o : ["Opsi A", "Opsi B", "Opsi C", "Opsi D", "Opsi E"];
+                    const text = await response.text();
+                    if (!text) throw new Error("Empty response body");
 
-            options.forEach((option, i) => {
-                const optionChar = String.fromCharCode(65 + i);
-                const cleanOption = option.replace(/\\rightarrow/g, '→').replace(/\$/g, '');
-                optionsContainer.innerHTML += `
-                    <div class="option-box" data-index="${i}">
-                        <span class="option-letter">${optionChar}</span>
-                        <span class="option-text">${cleanOption}</span>
-                    </div>
-                `;
-            });
-            
-            document.querySelectorAll('.option-box').forEach(box => {
-                box.addEventListener('click', () => selectAnswer(box));
-            });
-            
-            nextBtn.style.display = 'none';
-            explainBtn.style.display = 'none';
-            explainBtn.disabled = false; 
-            explanationContainer.style.display = 'none';
-            explanationText.innerHTML = ''; 
-            
-            if (quizSettings.timerActive && quizSettings.timerType === 'per-soal') {
-                timeLeft = quizSettings.timerPerSoal;
-                startPerSoalTimer();
-            }
-        }
+                    try {
+                        return JSON.parse(text);
+                    } catch (e) {
+                        // Jika JSON invalid, ini kemungkinan "Unexpected end of input"
+                        console.warn("JSON parse failed, retrying...", e);
+                        throw new Error("Malformed JSON response");
+                    }
 
-        function selectAnswer(selectedBox) {
-            stopTimer();
-            const selectedIndex = parseInt(selectedBox.dataset.index);
-            const correctIndex = quizQuestions[currentQuestionIndex].a;
-            const isCorrect = selectedIndex === correctIndex;
-            
-            userAnswers.push({
-                question: quizQuestions[currentQuestionIndex].q,
-                options: quizQuestions[currentQuestionIndex].o,
-                correctIndex: correctIndex,
-                userIndex: selectedIndex,
-                isCorrect: isCorrect,
-                explanation: quizQuestions[currentQuestionIndex].e,
-                topic: quizQuestions[currentQuestionIndex].t || "Umum",
-                deeperExplanation: null 
-            });
-            
-            if (isCorrect) score++;
-            
-            document.querySelectorAll('.option-box').forEach(box => { box.classList.add('disabled'); });
-            
-            if (quizSettings.showStatus) {
-                if (isCorrect) {
-                    selectedBox.classList.add('correct');
-                } else {
-                    selectedBox.classList.add('incorrect');
-                    if (quizSettings.showCorrect) {
-                        const correctBox = document.querySelector(`.option-box[data-index="${correctIndex}"]`);
-                        if (correctBox) correctBox.classList.add('correct');
-                    }
-                }
-                const cleanExp = (quizQuestions[currentQuestionIndex].e || "Penjelasan tidak tersedia.").replace(/\\rightarrow/g, '→').replace(/\$/g, '');
-                explanationText.innerHTML = marked.parse(cleanExp);
-                explanationContainer.style.display = 'block'; 
-                explainBtn.style.display = 'inline-block';
-            }
-            nextBtn.style.display = 'inline-block';
-        }
+                } catch (error) {
+                    console.error(`Attempt ${attempt + 1} failed:`, error);
+                    attempt++;
+                    if (attempt >= maxRetries) throw error; 
+                    const delay = Math.pow(2, attempt) * 1000 + Math.random() * 1000;
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
+            }
+        }
+        
+        async function getQuestionsFromGemini(settings) {
+            const topicMap = {
+                'campuran': 'Campuran (Pengetahuan PLN, Keuangan, Operasional, SDM, Pemasaran, GCG)',
+                'pln': 'Pengetahuan Umum PLN, Visi Misi, AKHLAK, RUPTL 2025-2034, dan PLN Indonesia Power',
+                'keuangan': 'Manajemen Keuangan (Analisis Rasio, NPV, IRR, WACC, Pasar Modal)',
+                'operasional': 'Manajemen Operasional (TQM, Six Sigma, Supply Chain, PERT/CPM, Manajemen Proyek)',
+                'pemasaran': 'Manajemen Pemasaran (STP, 4P, 7P, SERVQUAL, Branding)',
+                'sdm': 'Manajemen SDM (Rekrutmen, Pelatihan, Kompensasi, Penilaian Kinerja, Hubungan Industrial)',
+                'strategis_gcg': 'Manajemen Strategis (SWOT, PESTEL, Porter 5 Forces) dan Good Corporate Governance (GCG, Prinsip TARIF, Teori Agensi)'
+            };
+            
+            const selectedTopic = topicMap[settings.type] || topicMap['campuran'];
+            
+            const systemPrompt = `Anda adalah Asisten Ahli TKB PLN. Misi Anda adalah membuat soal Tes Kemampuan Bidang (TKB) Non-Teknik untuk rekrutmen PLN (posisi Manajemen).
+PERINTAH: Buat ${settings.num} soal pilihan ganda.
+TOPIK: ${selectedTopic}.
+PENTING: Soal harus relevan, menantang (setara S1 Manajemen), dan fokus pada aplikasi konsep, bukan hanya hafalan.
 
-        nextBtn.addEventListener('click', () => {
-            currentQuestionIndex++;
-            showQuestion(currentQuestionIndex);
-        });
-        
-        explainBtn.addEventListener('click', async () => {
-            const index = isReviewMode ? reviewIndex : currentQuestionIndex;
-            const currentAnswerData = userAnswers[index];
+ATURAN KUALITAS DISTRAKTOR (SANGAT KRITIS):
+1.  **KESETARAAN PANJANG:** Panjang kalimat antara jawaban benar dan semua jawaban salah HARUS serupa.
+2.  **KOMPLEKSITAS SERUPA:** Distraktor HARUS menggunakan terminologi dan struktur kalimat yang sama kompleksnya.
+3.  **PLAUSIBILITAS:** Distraktor harus merupakan kesalahan umum yang logis.
+4.  **HINDARI KATA KUNCI:** Jangan gunakan "selalu", "tidak pernah", "hanya".
 
-            if (currentAnswerData.deeperExplanation) {
-                const cleanCache = currentAnswerData.deeperExplanation.replace(/\\rightarrow/g, '→').replace(/\$/g, '');
-                explanationModalText.innerHTML = marked.parse(cleanCache);
-                explanationModal.style.display = 'flex';
-  _           return; 
-            }
+ATURAN FORMATTING:
+JANGAN GUNAKAN FORMAT LATEX (tanda $ atau \\rightarrow). Gunakan simbol teks biasa atau Unicode (misal: "->").
+            
+Anda HARUS mengembalikan jawaban HANYA dalam format JSON yang valid.
+Pastikan ada 5 pilihan jawaban (A, B, C, D, E) untuk setiap soal.
+Pastikan bidang 'a' adalah index (angka 0-4) dari jawaban yang benar.
+Pastikan bidang 'e' berisi penjelasan singkat.
+Pastikan bidang 't' (topik) diisi dengan kategori soal (misal: "Keuangan", "SDM").`;
 
-            explainBtn.disabled = true; 
-            const baseExplanation = currentAnswerData.explanation || "Penjelasan tidak tersedia.";
-            explanationModalText.innerHTML = `<div class="loader" style="margin: 20px auto;"></div><p style="text-align:center;">AI sedang memuat penjelasan mendalam...</p>`;
-            explanationModal.style.display = 'flex';
-            
-            try {
-                const deeperExplanation = await getDeeperExplanation(currentAnswerData.question, baseExplanation);
-                currentAnswerData.deeperExplanation = deeperExplanation;
-                const cleanDeepExp = deeperExplanation.replace(/\\rightarrow/g, '→').replace(/\$/g, '');
-              _ explanationModalText.innerHTML = marked.parse(cleanDeepExp);
-            } catch (error) {
-                explanationModalText.innerHTML = `<em style="color:red;">Gagal memuat penjelasan AI: ${error.message}</em>`;
-            }
-        });
+            const userQuery = `Buatkan saya ${settings.num} soal TKB PLN Non-Teknik tentang ${selectedTopic}.`;
 
-        function endQuiz() {
-            stopTimer();
-            window.removeEventListener('beforeunload', confirmExit);
-            switchScreen(quizScreen, resultsScreen);
-            
-            const finalScore = Math.round((score / quizQuestions.length) * 100);
-            scoreDisplay.textContent = `${finalScore}`;
-            scoreDetails.textContent = `Anda menjawab benar ${score} dari ${quizQuestions.length} soal.`;
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "OBJECT",
+                        properties: {
+                            "questions": {
+                                type: "ARRAY",
+                                items: {
+                                    type: "OBJECT",
+                                    properties: {
+                                        "q": { "type": "STRING" },
+                                        "o": { "type": "ARRAY", "items": { "type": "STRING", "minLength": 15 } },
+                                        "a": { "type": "INTEGER" },
+                                        "e": { "type": "STRING", "minLength": 30 },
+                                        "t": { "type": "STRING" } 
+                                    },
+                                    required: ["q", "o", "a", "e", "t"]
+                                }
+                            }
+                        },
+                        required: ["questions"]
+                    }
+                }
+            };
 
-            if (finalScore > 70) {
-                confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-            }
-            generateTopicBreakdown();
-        }
+            try {
+                const result = await fetchWithRetry(generationApiUrl, payload);
+                if (result.candidates && result.candidates[0].content?.parts?.[0]?.text) {
+                    const parsedJson = JSON.parse(result.candidates[0].content.parts[0].text);
+                    if (parsedJson.questions && parsedJson.questions.length > 0) return parsedJson.questions;
+                }
+                throw new Error("Struktur respons API tidak valid.");
+            } catch (error) {
+                console.error("Error saat generate soal:", error);
+                alert(`Gagal membuat soal: ${error.message}. Coba kurangi jumlah soal.`);
+                return []; 
+            }
+        }
 
-        function generateTopicBreakdown() {
-            const topics = {};
-            userAnswers.forEach(ans => {
-                const t = ans.topic;
-                if (!topics[t]) topics[t] = { total: 0, correct: 0 };
-                topics[t].total++;
-                if (ans.isCorrect) topics[t].correct++;
-            });
+        async function getAnalysisFromGemini(answers) {
+            const systemPrompt = `Anda adalah Analis Performa Rekrutmen. Analisis hasil kuis TKB BUMN.
+BERIKAN ANALISIS YANG MENDALAM:
+1.  Identifikasi kategori soal kuat/lemah.
+2.  Pujian untuk jawaban benar sulit.
+3.  Jelaskan kesalahan konsep untuk jawaban salah.
+4.  Saran konkret.
+ATURAN FORMATTING: JANGAN GUNAKAN LATEX. Gunakan teks biasa.`;
 
-            let html = `<div class="breakdown-title">Analisis Per Topik</div>`;
-            for (const [topic, data] of Object.entries(topics)) {
-                const percent = Math.round((data.correct / data.total) * 100);
-                html += `<div class="breakdown-row"><span>${topic}</span><span class="breakdown-score">${data.correct}/${data.total} (${percent}%)</span></div>`;
-            }
-            topicBreakdown.innerHTML = html;
-        }
+            const simplifiedAnswers = answers.map((ans, index) => ({
+                nomor: index + 1,
+                kategori: ans.topic,
+                pertanyaan: ans.question,
+                jawabanUser: ans.userIndex !== -1 ? ans.options[ans.userIndex] : "Tidak Dijawab",
+                jawabanBenar: ans.options[ans.correctIndex],
+                isCorrect: ans.isCorrect
+            }));
 
-        function startPerSoalTimer() {
-            stopTimer(); 
-            timerDisplay.textContent = timeLeft;
-            timerInterval = setInterval(() => {
-                timeLeft--;
-                timerDisplay.textContent = timeLeft;
-                if (timeLeft <= 0) handleTimeOut();
-            }, 1000);
-        }
-        
-        function startTotalTimer() {
-            stopTimer();
-            updateTotalTimerDisplay();
-            timerInterval = setInterval(() => {
-                timeLeft--;
-                updateTotalTimerDisplay();
-                if (timeLeft <= 0) endQuiz();
-            }, 1000);
-        }
-        
-        function updateTotalTimerDisplay() {
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
-            timerDisplay.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-        }
-        
-        function handleTimeOut() {
-            stopTimer();
-            document.querySelectorAll('.option-box').forEach(box => { box.classList.add('disabled'); });
+            const userQuery = `Analisis hasil ini:\n${JSON.stringify(simplifiedAnswers, null, 2)}`;
 
-            userAnswers.push({
-                question: quizQuestions[currentQuestionIndex].q,
-                options: quizQuestions[currentQuestionIndex].o,
-                correctIndex: quizQuestions[currentQuestionIndex].a,
-                userIndex: -1,
-                isCorrect: false,
-                explanation: quizQuestions[currentQuestionIndex].e,
-                topic: quizQuestions[currentQuestionIndex].t || "Umum",
-                deeperExplanation: null
-            });
-            
-            if (quizSettings.showStatus) {
-                questionText.innerHTML = `<span style="color:red;font-weight:bold;">WAKTU HABIS!</span><br>${questionText.textContent}`;
-                if (quizSettings.showCorrect) {
-                    const correctIndex = quizQuestions[currentQuestionIndex].a;
-                    const correctBox = document.querySelector(`.option-box[data-index="${correctIndex}"]`);
-                    if (correctBox) correctBox.classList.add('correct');
-                }
-                nextBtn.style.display = 'inline-block';
-                const cleanExp = (quizQuestions[currentQuestionIndex].e || "Penjelasan tidak tersedia.").replace(/\\rightarrow/g, '→').replace(/\$/g, '');
-        _       explanationText.innerHTML = marked.parse(cleanExp);
-                explanationContainer.style.display = 'block'; 
-                explainBtn.style.display = 'inline-block';
-            } else {
-                currentQuestionIndex++;
-                showQuestion(currentQuestionIndex);
-            }
-        }
-        
-        function stopTimer() { clearInterval(timerInterval); }
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] }
+            };
 
-        pauseBtn.addEventListener('click', () => {
-            if (isPaused) return;
-            isPaused = true;
-            stopTimer();
-            pauseOverlay.style.display = 'flex';
-MS     });
+            try {
+                const result = await fetchWithRetry(generationApiUrl, payload);
+                return result.candidates[0].content.parts[0].text;
+            } catch (error) {
+                return `Gagal menganalisis performa: ${error.message}`;
+            }
+        }
+        
+        async function getDeeperExplanation(question, baseExplanation) {
+            const systemPrompt = `Anda adalah Profesor Manajemen. Jelaskan konsep ini secara mendalam, analogi, dan contoh nyata (PLN/BUMN).
+JANGAN ulangi penjelasan dasar.
+ATURAN FORMATTING: JANGAN GUNAKAN LATEX. Gunakan teks biasa.`;
 
-        resumeBtn.addEventListener('click', () => {
-            isPaused = false;
-            pauseOverlay.style.display = 'none';
-            if (quizSettings.timerType === 'per-soal') startPerSoalTimer();
-            else startTotalTimer();
-        });
+            const userQuery = `Soal: "${question}"\nPenjelasan dasar: "${baseExplanation}"\nBerikan penjelasan mendalam.`;
 
-        homeBtn.addEventListener('click', () => { location.reload(); });
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] }
+            };
 
-        analysisBtn.addEventListener('click', async () => {
-            if (cachedAnalysisResult) {
-                const cleanCache = cachedAnalysisResult.replace(/\\rightarrow/g, '→').replace(/\$/g, '');
-                analysisTextContent.innerHTML = marked.parse(cleanCache);
-                analysisModal.style.display = 'flex';
-                return; 
-            }
-            analysisTextContent.innerHTML = `<div class="loader" style="margin: 20px auto;"></div><p style="text-align:center;">AI sedang menganalisis performa Anda...</p>`;
-            analysisModal.style.display = 'flex';
-            try {
-                const analysisResult = await getAnalysisFromGemini(userAnswers);
-                cachedAnalysisResult = analysisResult; 
-                const cleanResult = analysisResult.replace(/\\rightarrow/g, '→').replace(/\$/g, '');
-                analysisTextContent.innerHTML = marked.parse(cleanResult);
-            } catch (error) {
-                analysisTextContent.innerHTML = `<p style="color:red;">Gagal memuat analisis: ${error.message}</p>`;
-            }
-        });
-        
-        closeAnalysisBtn.addEventListener('click', () => { analysisModal.style.display = 'none'; });
-        closeExplanationBtn.addEventListener('click', () => { explanationModal.style.display = 'none'; explainBtn.disabled = false; });
-        
-        reviewBtn.addEventListener('click', () => {
-            isReviewMode = true;
-            reviewIndex = 0;
-            switchScreen(resultsScreen, quizScreen);
-            timerContainer.style.display = 'none';
-            nextBtn.style.display = 'none';
-            explainBtn.style.display = 'inline-block'; 
-            reviewNavContainer.style.display = 'flex';
-            backToResultsBtn.style.display = 'inline-block';
-            showReviewQuestion(reviewIndex);
-        });
+             try {
+                const result = await fetchWithRetry(generationApiUrl, payload);
+                return result.candidates[0].content.parts[0].text;
+             } catch (error) {
+                return `Gagal memuat penjelasan: ${error.message}`;
+             }
+        }
 
-        backToResultsBtn.addEventListener('click', () => {
-            isReviewMode = false;
-            switchScreen(quizScreen, resultsScreen);
-        });
+        // ===========================
+        // == UI/UX LOGIC ==
+        // ===========================
+        
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            themeToggle.textContent = isDark ? '☀️' : '🌙';
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        });
 
-        reviewPrevBtn.addEventListener('click', () => {
-            if (reviewIndex > 0) { reviewIndex--; showReviewQuestion(reviewIndex); }
-        });
-        
-        reviewNextBtn.addEventListener('click', () => {
-            if (reviewIndex < userAnswers.length - 1) { reviewIndex++; showReviewQuestion(reviewIndex); }
-        });
-        
-        function showReviewQuestion(index) {
-            const answerData = userAnswers[index];
-            const q = answerData.question;
-            const options = answerData.options;
-            const correctIndex = answerData.correctIndex;
-            const userIndex = answerData.userIndex;
-s           
-            const progressPercent = ((index + 1) / userAnswers.length) * 100;
-            progressBarFill.style.width = `${progressPercent}%`;
-            topicBadge.textContent = answerData.topic || "UMUM";
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+            themeToggle.textContent = '☀️';
+        }
 
-            questionText.textContent = q.replace(/\\rightarrow/g, '→').replace(/\$/g, '');
-            questionCounter.textContent = `Tinjauan Soal ${index + 1} dari ${userAnswers.length}`;
-            optionsContainer.innerHTML = '';
-            
-            options.forEach((option, i) => {
-                const optionChar = String.fromCharCode(65 + i);
-                const cleanOption = option.replace(/\\rightarrow/g, '→').replace(/\$/g, '');
-                optionsContainer.innerHTML += `
-                    <div class="option-box disabled" data-index="${i}">
-                        <span class="option-letter">${optionChar}</span>
-                        <span class="option-text">${cleanOption}</span>
-                    </div>
-                `;
-            });
+        function switchScreen(hideScreen, showScreen) {
+            containerElement.classList.remove('fade-in-animation');
+            void containerElement.offsetWidth; 
+            hideScreen.style.display = 'none';
+            showScreen.style.display = 'block';
+            containerElement.classList.add('fade-in-animation');
+            window.scrollTo(0, 0);
+        }
 
-            if (userIndex === correctIndex) {
-                const correctBox = document.querySelector(`.option-box[data-index="${userIndex}"]`);
-                if (correctBox) correctBox.classList.add('correct');
-            } else {
-                if (userIndex !== -1) { 
-                    const incorrectBox = document.querySelector(`.option-box[data-index="${userIndex}"]`);
-                    if (incorrectBox) incorrectBox.classList.add('incorrect');
-                }
-                const correctBox = document.querySelector(`.option-box[data-index="${correctIndex}"]`);
-                if (correctBox) correctBox.classList.add('correct');
-          _ }
-            
-            const cleanExp = (answerData.explanation || "Penjelasan tidak tersedia.").replace(/\\rightarrow/g, '→').replace(/\$/g, '');
-            explanationText.innerHTML = `<strong>Penjelasan:</strong> ${marked.parse(cleanExp)}`;
-            explanationContainer.style.display = 'block';
+        document.addEventListener('keydown', (e) => {
+            if (quizScreen.style.display !== 'block') return;
+            const key = e.key.toLowerCase();
+            const options = ['a', 'b', 'c', 'd', 'e'];
+            
+            if (options.includes(key)) {
+                const index = options.indexOf(key);
+                const optionBox = document.querySelector(`.option-box[data-index="${index}"]`);
+                if (optionBox && !optionBox.classList.contains('disabled')) selectAnswer(optionBox);
+            }
+            if (key === 'enter' || key === 'arrowright') {
+                if (nextBtn.style.display !== 'none') nextBtn.click();
+                if (reviewNextBtn.style.display !== 'none') reviewNextBtn.click();
+            }
+            if (key === 'arrowleft') {
+                if (reviewPrevBtn.style.display !== 'none') reviewPrevBtn.click();
+            }
+        });
 
-            reviewPrevBtn.style.display = (index === 0) ? 'none' : 'inline-block';
-            reviewNextBtn.style.display = (index === userAnswers.length - 1) ? 'none' : 'inline-block';
-        }
-        
-        updateTimerOptions(); 
-    </script>
+        function confirmExit(e) { e.preventDefault(); e.returnValue = ''; }
+        
+        timerActiveRadio.addEventListener('change', (e) => {
+            timerOptions.style.display = e.target.value === 'ya' ? 'block' : 'none';
+            if (e.target.value === 'ya') updateTimerOptions();
+        });
+
+        timerTypeSelect.addEventListener('change', updateTimerOptions);
+        numQuestionsRadio.addEventListener('change', updateTimerOptions);
+
+        function updateTimerOptions() {
+            if (timerTypeSelect.value === 'per-soal') {
+                timerPerSoalSettings.style.display = 'block';
+                timerTotalSettings.style.display = 'none';
+            } else {
+                timerPerSoalSettings.style.display = 'none';
+                timerTotalSettings.style.display = 'block';
+                const numQ = parseInt(document.querySelector('input[name="num-q"]:checked').value);
+                const baseTimes = [30, 60, 75, 90];
+                timerTotalSelect.innerHTML = '';
+                baseTimes.forEach(base => {
+                    const total = numQ * base;
+                    const minutes = Math.floor(total / 60);
+                    const seconds = total % 60;
+                    const option = document.createElement('option');
+                    option.value = total;
+                    option.textContent = `${minutes} menit ${seconds} detik (${base} detik/soal)`;
+                    timerTotalSelect.appendChild(option);
+                });
+            }
+        }
+        
+        showStatusRadio.addEventListener('change', (e) => {
+            showCorrectOption.style.display = e.target.value === 'ya' ? 'block' : 'none';
+        });
+
+        // ========================
+        // == CORE LOGIC ==
+        // ========================
+        
+        generateBtn.addEventListener('click', async () => {
+            quizSettings = {
+                type: quizTypeSelect.value,
+                num: parseInt(document.querySelector('input[name="num-q"]:checked').value),
+                timerActive: document.querySelector('input[name="timer-act"]:checked').value === 'ya',
+                timerType: timerTypeSelect.value,
+                timerPerSoal: parseInt(timerPerSoalSelect.value),
+                timerTotal: timerTotalSelect.value ? parseInt(timerTotalSelect.value) : (parseInt(document.querySelector('input[name="num-q"]:checked').value) * 45),
+                pauseActive: document.querySelector('input[name="pause-act"]:checked').value === 'ya',
+                showStatus: document.querySelector('input[name="show-stat"]:checked').value === 'ya',
+                showCorrect: document.querySelector('input[name="show-corr"]:checked').value === 'ya',
+            };
+            
+            loadingText.textContent = `${quizSettings.num} Soal sedang dipersiapkan oleh AI...`;
+            loadingModal.style.display = 'flex';
+            generateBtn.disabled = true;
+            
+            try {
+                quizQuestions = await getQuestionsFromGemini(quizSettings);
+                if (quizQuestions.length === 0) throw new Error("AI tidak mengembalikan soal.");
+
+                loadingModal.style.display = 'none';
+                readyTitle.textContent = `${quizQuestions.length} Soal sudah siap.`;
+                readyModal.style.display = 'flex';
+            } catch (error) {
+                loadingModal.style.display = 'none';
+                alert(`Error: ${error.message}`);
+            } finally {
+                generateBtn.disabled = false;
+            }
+        });
+
+        startQuizBtn.addEventListener('click', () => {
+            readyModal.style.display = 'none';
+            switchScreen(welcomeScreen, quizScreen);
+            window.addEventListener('beforeunload', confirmExit);
+            startQuiz();
+        });
+
+        function startQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            userAnswers = [];
+            isReviewMode = false;
+            cachedAnalysisResult = null; 
+            
+            reviewNavContainer.style.display = 'none';
+            backToResultsBtn.style.display = 'none';
+            
+            if (quizSettings.timerActive) {
+                timerContainer.style.display = 'flex';
+                pauseBtn.style.display = quizSettings.pauseActive ? 'flex' : 'none';
+                if (quizSettings.timerType === 'keseluruhan') {
+                    totalTime = quizSettings.timerTotal;
+                    timeLeft = totalTime;
+                    startTotalTimer();
+                }
+            } else {
+                timerContainer.style.display = 'none';
+            }
+            showQuestion(currentQuestionIndex);
+        }
+
+        function showQuestion(index) {
+            if (index >= quizQuestions.length) {
+                endQuiz();
+                return;
+            }
+            
+            const progressPercent = ((index + 1) / quizQuestions.length) * 100;
+            progressBarFill.style.width = `${progressPercent}%`;
+
+            const q = quizQuestions[index];
+            topicBadge.textContent = q.t || "UMUM";
+            questionText.textContent = q.q.replace(/\\rightarrow/g, '→').replace(/\$/g, '');
+            questionCounter.textContent = `Soal ${index + 1} dari ${quizQuestions.length}`;
+            optionsContainer.innerHTML = '';
+            
+            const options = q.o && q.o.length > 0 ? q.o : ["Opsi A", "Opsi B", "Opsi C", "Opsi D", "Opsi E"];
+
+            options.forEach((option, i) => {
+                const optionChar = String.fromCharCode(65 + i);
+                const cleanOption = option.replace(/\\rightarrow/g, '→').replace(/\$/g, '');
+                optionsContainer.innerHTML += `
+                    <div class="option-box" data-index="${i}">
+                        <span class="option-letter">${optionChar}</span>
+                        <span class="option-text">${cleanOption}</span>
+                    </div>
+                `;
+            });
+            
+            document.querySelectorAll('.option-box').forEach(box => {
+                box.addEventListener('click', () => selectAnswer(box));
+            });
+            
+            nextBtn.style.display = 'none';
+            explainBtn.style.display = 'none';
+            explainBtn.disabled = false; 
+            explanationContainer.style.display = 'none';
+            explanationText.innerHTML = ''; 
+            
+            if (quizSettings.timerActive && quizSettings.timerType === 'per-soal') {
+                timeLeft = quizSettings.timerPerSoal;
+                startPerSoalTimer();
+            }
+        }
+
+        function selectAnswer(selectedBox) {
+            stopTimer();
+            const selectedIndex = parseInt(selectedBox.dataset.index);
+            const correctIndex = quizQuestions[currentQuestionIndex].a;
+            const isCorrect = selectedIndex === correctIndex;
+            
+            userAnswers.push({
+                question: quizQuestions[currentQuestionIndex].q,
+                options: quizQuestions[currentQuestionIndex].o,
+                correctIndex: correctIndex,
+                userIndex: selectedIndex,
+                isCorrect: isCorrect,
+                explanation: quizQuestions[currentQuestionIndex].e,
+                topic: quizQuestions[currentQuestionIndex].t || "Umum",
+                deeperExplanation: null 
+            });
+            
+            if (isCorrect) score++;
+            
+            document.querySelectorAll('.option-box').forEach(box => { box.classList.add('disabled'); });
+            
+            if (quizSettings.showStatus) {
+                if (isCorrect) {
+                    selectedBox.classList.add('correct');
+                } else {
+                    selectedBox.classList.add('incorrect');
+                    if (quizSettings.showCorrect) {
+                        const correctBox = document.querySelector(`.option-box[data-index="${correctIndex}"]`);
+                        if (correctBox) correctBox.classList.add('correct');
+                    }
+                }
+                const cleanExp = (quizQuestions[currentQuestionIndex].e || "Penjelasan tidak tersedia.").replace(/\\rightarrow/g, '→').replace(/\$/g, '');
+                explanationText.innerHTML = marked.parse(cleanExp);
+                explanationContainer.style.display = 'block'; 
+                explainBtn.style.display = 'inline-block';
+            }
+            nextBtn.style.display = 'inline-block';
+        }
+
+        nextBtn.addEventListener('click', () => {
+            currentQuestionIndex++;
+            showQuestion(currentQuestionIndex);
+        });
+        
+        explainBtn.addEventListener('click', async () => {
+            const index = isReviewMode ? reviewIndex : currentQuestionIndex;
+            const currentAnswerData = userAnswers[index];
+
+            if (currentAnswerData.deeperExplanation) {
+                const cleanCache = currentAnswerData.deeperExplanation.replace(/\\rightarrow/g, '→').replace(/\$/g, '');
+                explanationModalText.innerHTML = marked.parse(cleanCache);
+                explanationModal.style.display = 'flex';
+                return; 
+            }
+
+            explainBtn.disabled = true; 
+            const baseExplanation = currentAnswerData.explanation || "Penjelasan tidak tersedia.";
+            explanationModalText.innerHTML = `<div class="loader" style="margin: 20px auto;"></div><p style="text-align:center;">AI sedang memuat penjelasan mendalam...</p>`;
+            explanationModal.style.display = 'flex';
+            
+            try {
+                const deeperExplanation = await getDeeperExplanation(currentAnswerData.question, baseExplanation);
+                currentAnswerData.deeperExplanation = deeperExplanation;
+                const cleanDeepExp = deeperExplanation.replace(/\\rightarrow/g, '→').replace(/\$/g, '');
+                explanationModalText.innerHTML = marked.parse(cleanDeepExp);
+            } catch (error) {
+                explanationModalText.innerHTML = `<em style="color:red;">Gagal memuat penjelasan AI: ${error.message}</em>`;
+            }
+        });
+
+        function endQuiz() {
+            stopTimer();
+            window.removeEventListener('beforeunload', confirmExit);
+            switchScreen(quizScreen, resultsScreen);
+            
+            const finalScore = Math.round((score / quizQuestions.length) * 100);
+            scoreDisplay.textContent = `${finalScore}`;
+            scoreDetails.textContent = `Anda menjawab benar ${score} dari ${quizQuestions.length} soal.`;
+
+            if (finalScore > 70) {
+                confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+            }
+            generateTopicBreakdown();
+        }
+
+        function generateTopicBreakdown() {
+            const topics = {};
+            userAnswers.forEach(ans => {
+                const t = ans.topic;
+                if (!topics[t]) topics[t] = { total: 0, correct: 0 };
+                topics[t].total++;
+                if (ans.isCorrect) topics[t].correct++;
+            });
+
+            let html = `<div class="breakdown-title">Analisis Per Topik</div>`;
+            for (const [topic, data] of Object.entries(topics)) {
+                const percent = Math.round((data.correct / data.total) * 100);
+                html += `<div class="breakdown-row"><span>${topic}</span><span class="breakdown-score">${data.correct}/${data.total} (${percent}%)</span></div>`;
+            }
+            topicBreakdown.innerHTML = html;
+        }
+
+        function startPerSoalTimer() {
+            stopTimer(); 
+            timerDisplay.textContent = timeLeft;
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                timerDisplay.textContent = timeLeft;
+                if (timeLeft <= 0) handleTimeOut();
+            }, 1000);
+        }
+        
+        function startTotalTimer() {
+            stopTimer();
+            updateTotalTimerDisplay();
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTotalTimerDisplay();
+                if (timeLeft <= 0) endQuiz();
+            }, 1000);
+        }
+        
+        function updateTotalTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerDisplay.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        }
+        
+        function handleTimeOut() {
+            stopTimer();
+            document.querySelectorAll('.option-box').forEach(box => { box.classList.add('disabled'); });
+
+            userAnswers.push({
+                question: quizQuestions[currentQuestionIndex].q,
+                options: quizQuestions[currentQuestionIndex].o,
+                correctIndex: quizQuestions[currentQuestionIndex].a,
+                userIndex: -1,
+                isCorrect: false,
+                explanation: quizQuestions[currentQuestionIndex].e,
+                topic: quizQuestions[currentQuestionIndex].t || "Umum",
+                deeperExplanation: null
+            });
+            
+            if (quizSettings.showStatus) {
+                questionText.innerHTML = `<span style="color:red;font-weight:bold;">WAKTU HABIS!</span><br>${questionText.textContent}`;
+                if (quizSettings.showCorrect) {
+                    const correctIndex = quizQuestions[currentQuestionIndex].a;
+                    const correctBox = document.querySelector(`.option-box[data-index="${correctIndex}"]`);
+                    if (correctBox) correctBox.classList.add('correct');
+                }
+                nextBtn.style.display = 'inline-block';
+                const cleanExp = (quizQuestions[currentQuestionIndex].e || "Penjelasan tidak tersedia.").replace(/\\rightarrow/g, '→').replace(/\$/g, '');
+                explanationText.innerHTML = marked.parse(cleanExp);
+                explanationContainer.style.display = 'block'; 
+                explainBtn.style.display = 'inline-block';
+            } else {
+                currentQuestionIndex++;
+                showQuestion(currentQuestionIndex);
+            }
+        }
+        
+        function stopTimer() { clearInterval(timerInterval); }
+
+        pauseBtn.addEventListener('click', () => {
+            if (isPaused) return;
+            isPaused = true;
+            stopTimer();
+            pauseOverlay.style.display = 'flex';
+        });
+
+        resumeBtn.addEventListener('click', () => {
+            isPaused = false;
+            pauseOverlay.style.display = 'none';
+            if (quizSettings.timerType === 'per-soal') startPerSoalTimer();
+            else startTotalTimer();
+        });
+
+        homeBtn.addEventListener('click', () => { location.reload(); });
+
+        analysisBtn.addEventListener('click', async () => {
+            if (cachedAnalysisResult) {
+                const cleanCache = cachedAnalysisResult.replace(/\\rightarrow/g, '→').replace(/\$/g, '');
+                analysisTextContent.innerHTML = marked.parse(cleanCache);
+                analysisModal.style.display = 'flex';
+                return; 
+            }
+            analysisTextContent.innerHTML = `<div class="loader" style="margin: 20px auto;"></div><p style="text-align:center;">AI sedang menganalisis performa Anda...</p>`;
+            analysisModal.style.display = 'flex';
+            try {
+                const analysisResult = await getAnalysisFromGemini(userAnswers);
+                cachedAnalysisResult = analysisResult; 
+                const cleanResult = analysisResult.replace(/\\rightarrow/g, '→').replace(/\$/g, '');
+                analysisTextContent.innerHTML = marked.parse(cleanResult);
+            } catch (error) {
+                analysisTextContent.innerHTML = `<p style="color:red;">Gagal memuat analisis: ${error.message}</p>`;
+            }
+        });
+        
+        closeAnalysisBtn.addEventListener('click', () => { analysisModal.style.display = 'none'; });
+        closeExplanationBtn.addEventListener('click', () => { explanationModal.style.display = 'none'; explainBtn.disabled = false; });
+        
+        reviewBtn.addEventListener('click', () => {
+            isReviewMode = true;
+            reviewIndex = 0;
+            switchScreen(resultsScreen, quizScreen);
+            timerContainer.style.display = 'none';
+            nextBtn.style.display = 'none';
+            explainBtn.style.display = 'inline-block'; 
+            reviewNavContainer.style.display = 'flex';
+            backToResultsBtn.style.display = 'inline-block';
+            showReviewQuestion(reviewIndex);
+        });
+
+        backToResultsBtn.addEventListener('click', () => {
+            isReviewMode = false;
+            switchScreen(quizScreen, resultsScreen);
+        });
+
+        reviewPrevBtn.addEventListener('click', () => {
+            if (reviewIndex > 0) { reviewIndex--; showReviewQuestion(reviewIndex); }
+        });
+        
+        reviewNextBtn.addEventListener('click', () => {
+            if (reviewIndex < userAnswers.length - 1) { reviewIndex++; showReviewQuestion(reviewIndex); }
+        });
+        
+        function showReviewQuestion(index) {
+            const answerData = userAnswers[index];
+            const q = answerData.question;
+            const options = answerData.options;
+            const correctIndex = answerData.correctIndex;
+            const userIndex = answerData.userIndex;
+            
+            const progressPercent = ((index + 1) / userAnswers.length) * 100;
+            progressBarFill.style.width = `${progressPercent}%`;
+            topicBadge.textContent = answerData.topic || "UMUM";
+
+            questionText.textContent = q.replace(/\\rightarrow/g, '→').replace(/\$/g, '');
+            questionCounter.textContent = `Tinjauan Soal ${index + 1} dari ${userAnswers.length}`;
+            optionsContainer.innerHTML = '';
+            
+            options.forEach((option, i) => {
+                const optionChar = String.fromCharCode(65 + i);
+                const cleanOption = option.replace(/\\rightarrow/g, '→').replace(/\$/g, '');
+                optionsContainer.innerHTML += `
+                    <div class="option-box disabled" data-index="${i}">
+                        <span class="option-letter">${optionChar}</span>
+                        <span class="option-text">${cleanOption}</span>
+                    </div>
+                `;
+            });
+
+            if (userIndex === correctIndex) {
+                const correctBox = document.querySelector(`.option-box[data-index="${userIndex}"]`);
+                if (correctBox) correctBox.classList.add('correct');
+            } else {
+                if (userIndex !== -1) { 
+                    const incorrectBox = document.querySelector(`.option-box[data-index="${userIndex}"]`);
+                    if (incorrectBox) incorrectBox.classList.add('incorrect');
+                }
+                const correctBox = document.querySelector(`.option-box[data-index="${correctIndex}"]`);
+                if (correctBox) correctBox.classList.add('correct');
+            }
+            
+            const cleanExp = (answerData.explanation || "Penjelasan tidak tersedia.").replace(/\\rightarrow/g, '→').replace(/\$/g, '');
+            explanationText.innerHTML = `<strong>Penjelasan:</strong> ${marked.parse(cleanExp)}`;
+            explanationContainer.style.display = 'block';
+
+            reviewPrevBtn.style.display = (index === 0) ? 'none' : 'inline-block';
+            reviewNextBtn.style.display = (index === userAnswers.length - 1) ? 'none' : 'inline-block';
+        }
+        
+        updateTimerOptions(); 
+    </script>
 </body>
 </html>
